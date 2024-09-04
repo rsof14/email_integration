@@ -1,4 +1,3 @@
-console.log('test local');
 let login = localStorage.getItem('login');
 let password = localStorage.getItem('password');
 if (!login || !password) {
@@ -21,9 +20,7 @@ socket.onmessage = function(event){
         const progressDiv = document.getElementById('progressbar');
         progressDiv.style.width = (now / max * 100).toString() + '%';
         progressDiv.innerHTML = 'Чтение сообщений';
-        console.log((now / max * 100).toString() + '%');
         progressDiv.setAttribute('aria-valuenow', (now / max * 100).toString() + '%');
-        console.log(progressDiv)
         }
     let loading = djangoData.loading_emails;
     if (loading == 'True') {
@@ -41,17 +38,18 @@ socket.onmessage = function(event){
         }
 
         const tableBody = document.querySelector('#emails_table tbody');
-        const row = tableBody.insertRow();
+        const row = tableBody.insertRow(0);
         const cellFrom = row.insertCell(0);
         const cellTopic = row.insertCell(1);
         const cellDate = row.insertCell(2);
         const cellMessage = row.insertCell(3);
+        const cellAttachment = row.insertCell(4);
 
         cellFrom.textContent = djangoData.email.from;
         cellTopic.textContent = djangoData.email.topic;
         cellDate.textContent = djangoData.email.send_date;
         cellMessage.textContent = msg;
-
+        cellAttachment.textContent = djangoData.email.attachments;
     }
 
 }

@@ -22,9 +22,9 @@ class EmailConsumer(AsyncWebsocketConsumer):
         item = Message.objects.filter(email_server=server, login=username).order_by(
             '-receive_date').first()
         if item:
-            return item.send_date
+            return item.receive_date
         else:
-            return datetime.date(2024, 1, 1)
+            return datetime.datetime(2024, 1, 1, 0, 0, 0)
 
     async def disconnect(self, code):
         print("Disconnected")

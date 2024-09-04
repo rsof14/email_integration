@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import index, main, all_emails
+from .views import index, main
 
 urlpatterns = [
     path('email', index),

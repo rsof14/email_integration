@@ -1,3 +1,4 @@
+from datetime import timedelta
 from email.utils import parsedate_to_datetime
 import html2text
 from requests_toolbelt.multipart import decoder
@@ -15,21 +16,36 @@ class IMAPConnection:
         self.folder = folder
         self.last_date = last_date
 
-    def get_email_body(self, a):
-        b = email.message_from_string(a)
-        body = ""
-
-        if b.is_multipart():
-            for part in b.walk():
-                ctype = part.get_content_type()
-                cdispo = str(part.get('Content-Disposition'))
-
-                if ctype == 'text/plain' and 'attachment' not in cdispo:
+    def get_email_body(self, email_message):
+        message_content = ''
+        if email_message.is_multipart():
+            for part in email_message.walk():
+                content_type = part.get_content_type()
+                if content_type == 'text/plain':
                     body = part.get_payload(decode=True)
+                    charset = part.get_content_charset()
+                    message_content = body.decode(charset)
+                    break
+                elif content_type == 'text/html':
+                    body = part.get_payload(decode=True)
+                    charset = part.get_content_charset()
+                    text_maker = html2text.HTML2Text()
+                    text_maker.ignore_links = True
+                    message_content = text_maker.handle(body.decode(charset))
                     break
         else:
-            body = b.get_payload(decode=True)
-        return body
+            content_type = email_message.get_content_type()
+            if content_type == 'text/plain':
+                body = email_message.get_payload(decode=True)
+                charset = email_message.get_content_charset()
+                message_content = body.decode(charset)
+            elif content_type == 'text/html':
+                body = email_message.get_payload(decode=True)
+                charset = email_message.get_content_charset()
+                text_maker = html2text.HTML2Text()
+                text_maker.ignore_links = True
+                message_content = text_maker.handle(body.decode(charset))
+        return message_content
 
     def get_email_attachments(self, message):
         attachments = []
@@ -48,7 +64,7 @@ class IMAPConnection:
         server = IMAPClient(self.server)
         server.login(username=self.username, password=self.password)
         server.select_folder(self.folder)
-        messages = server.search([u'SINCE', self.last_date])
+        messages = server.search(['SINCE', self.last_date])
         msgs_numb = len(messages)
 
         for uid, message_data in server.fetch(messages, "RFC822").items():

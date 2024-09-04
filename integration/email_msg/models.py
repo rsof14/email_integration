@@ -8,7 +8,7 @@ class Message(models.Model):
     topic = models.CharField('topic', max_length=256)
     send_date = models.DateTimeField()
     receive_date = models.DateTimeField(auto_now_add=True)
-    from_email = models.CharField(max_length=256)
+    from_email = models.EmailField()
     message_text = models.TextField()
     attachments = models.FileField(upload_to='attachments/', null=True, blank=True, max_length=300)
     email_server = models.CharField(max_length=30)

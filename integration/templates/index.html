@@ -17,9 +17,19 @@
                     <th>Topic</th>
                     <th>Date</th>
                     <th>Message</th>
+                    <th>Attachment</th>
                 </tr>
             </thead>
             <tbody>
+            {% for data in previous_msgs %}
+            <tr>
+                <td>{{ data.from_email }}</td>
+                <td>{{ data.topic }}</td>
+                <td>{{ data.send_date }}</td>
+                <td>{{ data.message_text }}</td>
+                <td>{{ data.attachments }}</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
