@@ -6,3 +6,5 @@ psycopg2-binary==2.9.5
 python-dotenv==1.0.0
 beautifulsoup4
 imapclient
+html2text==2024.2.26
+requests-toolbelt==1.0.0
